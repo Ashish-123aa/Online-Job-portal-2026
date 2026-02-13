@@ -77,7 +77,9 @@ function updateWranglerJsonc() {
 }
 
 function runSetupCommands() {
-    const commands = [];
+    const commands = [
+    "bun add @reduxjs/toolkit@^2.2.0 react-redux@^9.1.0 axios@^1.7.0"
+];
     
     if (commands.length === 0) {
         console.log('⊘ No setup commands to run');
