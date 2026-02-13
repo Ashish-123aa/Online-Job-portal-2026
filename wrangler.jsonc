@@ -17,8 +17,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "{{PROJECT_NAME}}-db",
-      "database_id": "{{D1_DATABASE_ID}}"
+      "database_name": "careerconnect-db",
+      "database_id": "1e3750f5-f700-4732-a9ed-ec3282b9328f"
     }
   ],
   // KV Namespace - Key-value storage for sessions, cache, etc.
