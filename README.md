@@ -1,244 +1,295 @@
-# CareerConnect - Online Job Portal
-A full-featured job portal built with React, TypeScript, Cloudflare Workers, and D1 SQLite database.
-## Features
-### For Job Seekers
-- 🔍 Browse and search jobs with advanced filters
-- 📝 Create and manage profile with skills and experience
-- 💼 Apply to jobs with cover letters
-- 📊 Track application status in dashboard
-- 🔔 View application history
-### For Recruiters
-- 🏢 Create and manage company profile
-- 📢 Post, edit, and delete job listings
-- 👥 View and manage job applicants
-- ✅ Update application status (Accept/Reject/Pending)
-- 📈 Dashboard with job statistics
-### General Features
-- 🔐 JWT-based authentication
-- 👤 Role-based access control
-- 🎨 Beautiful, responsive UI with Tailwind CSS
-- 🌙 Dark mode support
-- ⚡ Fast edge deployment with Cloudflare Workers
-- 💾 Serverless D1 SQLite database
-## Tech Stack
-**Frontend:**
+# Full-Stack React + Cloudflare Workers Template
+
+A modern, production-ready template for building full-stack applications with React, TypeScript, and Cloudflare Workers. Features authentication, database integration, and a beautiful UI component library.
+
+[cloudflarebutton]
+
+## ✨ Features
+
+- **Modern Frontend Stack**: React 18, TypeScript, Vite with HMR
+- **Cloudflare Workers Backend**: Edge-first deployment with Hono framework
+- **Authentication System**: JWT-based auth with session management
+- **Database Integration**: Cloudflare D1 (SQLite) with Drizzle ORM
+- **UI Components**: 46+ pre-built components using shadcn/ui and Radix UI
+- **Type-Safe API Client**: End-to-end type safety from frontend to backend
+- **Dark Mode**: Built-in theme switching with system preference detection
+- **Rate Limiting**: Protect your API endpoints from abuse
+- **Security Headers**: Production-ready security configuration
+- **Error Handling**: Comprehensive error boundaries and reporting
+
+## 🛠️ Technology Stack
+
+### Frontend
 - React 18 with TypeScript
-- Zustand for state management
-- React Hook Form + Zod for form validation
-- Tailwind CSS for styling
-- Axios for API requests
+- Vite for blazing-fast development
+- TailwindCSS for styling
 - React Router for navigation
-- shadcn/ui components
-**Backend:**
+- TanStack Query for data fetching
+- Framer Motion for animations
+- shadcn/ui component library
+
+### Backend
 - Cloudflare Workers with Hono framework
-- D1 SQLite database
-- JWT authentication with Web Crypto API
-- RESTful API architecture
-## Getting Started
-### Prerequisites
+- Cloudflare D1 (serverless SQL database)
+- Drizzle ORM for type-safe database queries
+- JWT authentication with bcrypt
+- KV storage for sessions and caching
+
+## 📋 Prerequisites
+
 - [Bun](https://bun.sh) v1.0 or higher
-- [Cloudflare account](https://dash.cloudflare.com/sign-up)
-- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)
-### Installation
-1. Clone the repository:
+- [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier available)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) installed globally
+
+## 🚀 Quick Start
+
+### 1. Clone and Install
+
 ```bash
-git clone <repo-url>
-cd careerconnect
-```
-2. Install dependencies:
-```bash
+# Clone the repository
+git clone <your-repo-url>
+cd <project-name>
+
+# Install dependencies (bootstrap script runs automatically)
 bun install
 ```
-3. Set up D1 database:
+
+### 2. Database Setup
+
+Create a D1 database:
+
 ```bash
-# Create D1 database
-bunx wrangler d1 create job-portal-db
-# Note the database_id and update wrangler.jsonc
+# Create database
+bunx wrangler d1 create your-db-name
+
+# Update wrangler.jsonc with the database_id from the output
 ```
-4. Create KV namespaces:
+
+Create KV namespaces:
+
 ```bash
 # Create KV namespaces
 bunx wrangler kv namespace create SESSIONS
 bunx wrangler kv namespace create CACHE
+
 # Update wrangler.jsonc with the namespace IDs
 ```
-5. Apply database schema:
+
+Run database migrations:
+
 ```bash
-# Apply the schema to local database
-bunx wrangler d1 execute job-portal-db --local --file=worker/db-schema.sql
-# Apply the schema to production database
-bunx wrangler d1 execute job-portal-db --remote --file=worker/db-schema.sql
+# Generate migration files
+bun run db:generate
+
+# Apply migrations to local database
+bunx wrangler d1 execute your-db-name --local --file=./drizzle/0000_*.sql
+
+# Apply migrations to production
+bunx wrangler d1 execute your-db-name --remote --file=./drizzle/0000_*.sql
 ```
-6. Update `wrangler.jsonc`:
-```jsonc
-{
-  "d1_databases": [{
-    "binding": "DB",
-    "database_name": "job-portal-db",
-    "database_id": "your-database-id-here"
-  }],
-  "kv_namespaces": [
-    {
-      "binding": "SESSIONS",
-      "id": "your-sessions-kv-id"
-    },
-    {
-      "binding": "CACHE",
-      "id": "your-cache-kv-id"
-    }
-  ]
-}
-```
-### Development
-Start the development server:
+
+### 3. Development
+
 ```bash
+# Start development server
 bun run dev
 ```
-Visit `http://localhost:3000`
-### Deployment
-Deploy to Cloudflare Workers:
-```bash
-bun run deploy
+
+Visit `http://localhost:3000` to see your application.
+
+## 📁 Project Structure
+
 ```
-### Mock Data
-The database schema includes mock data:
-- 2 job seekers (password: any 6+ chars for demo)
-- 2 recruiters (password: any 6+ chars for demo)
-- 2 companies
-- 4 sample jobs
-- 2 sample applications
-## API Documentation
-### Authentication
-**POST /api/auth/register**
-- Register a new user
-- Body: `{ email, password, displayName, role }`
-- Returns: `{ user, token }`
-**POST /api/auth/login**
-- Login user
-- Body: `{ email, password }`
-- Returns: `{ user, token }`
-**GET /api/auth/me**
-- Get current user
-- Headers: `Authorization: Bearer <token>`
-- Returns: `{ user }`
-### Jobs
-**GET /api/jobs**
-- Get all active jobs with filters
-- Query params: `search, location, jobType, experienceLevel, salaryMin, page, limit`
-- Returns: `{ jobs[], pagination }`
-**GET /api/jobs/:id**
-- Get job details
-- Returns: `{ job }`
-**POST /api/jobs** (Recruiter only)
-- Create new job
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ title, description, requirements, location, jobType, experienceLevel, salaryMin, salaryMax, skills, status }`
-- Returns: `{ job }`
-**PUT /api/jobs/:id** (Recruiter only)
-- Update job
-- Headers: `Authorization: Bearer <token>`
-- Body: Job fields to update
-- Returns: `{ job }`
-**DELETE /api/jobs/:id** (Recruiter only)
-- Delete job
-- Headers: `Authorization: Bearer <token>`
-- Returns: `{ success: true }`
-**GET /api/jobs/my/all** (Recruiter only)
-- Get recruiter's jobs
-- Headers: `Authorization: Bearer <token>`
-- Returns: `{ jobs[] }`
-### Applications
-**POST /api/applications** (Job Seeker only)
-- Apply to a job
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ jobId, coverLetter }`
-- Returns: `{ application }`
-**GET /api/applications/my** (Job Seeker only)
-- Get user's applications
-- Headers: `Authorization: Bearer <token>`
-- Returns: `{ applications[] }`
-**GET /api/applications/job/:jobId** (Recruiter only)
-- Get applicants for a job
-- Headers: `Authorization: Bearer <token>`
-- Returns: `{ applications[] }`
-**PUT /api/applications/:id/status** (Recruiter only)
-- Update application status
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ status: 'pending' | 'accepted' | 'rejected' }`
-- Returns: `{ application }`
-### Profile (Job Seeker)
-**GET /api/profile**
-- Get user profile
-- Headers: `Authorization: Bearer <token>`
-- Returns: `{ profile }`
-**PUT /api/profile** (Job Seeker only)
-- Update profile
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ phone, location, bio, skills, experience, education }`
-- Returns: `{ profile }`
-### Company (Recruiter)
-**GET /api/company**
-- Get company profile
-- Headers: `Authorization: Bearer <token>`
-- Returns: `{ company }`
-**POST /api/company** (Recruiter only)
-- Create company profile
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ name, description, industry, location, website, size }`
-- Returns: `{ company }`
-**PUT /api/company** (Recruiter only)
-- Update company profile
-- Headers: `Authorization: Bearer <token>`
-- Body: Company fields to update
-- Returns: `{ company }`
-## Project Structure
-```
-├── src/                      # Frontend source
+├── src/                      # Frontend source code
 │   ├── components/          # React components
 │   │   ├── ui/             # shadcn/ui components
-│   │   ├── Navbar.tsx
-│   │   ├── JobCard.tsx
-│   │   ├── ApplicationCard.tsx
-│   │   └── ProtectedRoute.tsx
+│   │   └── layout/         # Layout components
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Utilities and API client
 │   ├── pages/              # Page components
-│   │   ├── LandingPage.tsx
-│   │   ├── LoginPage.tsx
-│   │   ├── RegisterPage.tsx
-│   │   ├── JobsPage.tsx
-│   │   ├── JobDetailsPage.tsx
-│   │   ├── JobSeekerDashboard.tsx
-│   │   ├── RecruiterDashboard.tsx
-│   │   ├── ProfilePage.tsx
-│   │   ├── CompanyProfilePage.tsx
-│   │   ├── PostJobPage.tsx
-│   │   ├── ApplicantsPage.tsx
-│   │   └── MyJobsPage.tsx
-│   ├── store/              # Zustand stores
-│   │   ├── authStore.ts
-│   │   └── jobStore.ts
-│   ├── lib/                # Utilities
-│   │   └── api.ts
-│   └── main.tsx            # Entry point
-├── worker/                  # Backend source
+│   └── main.tsx            # Application entry point
+├── worker/                  # Backend source code
+│   ├── database/           # Database schema and services
+│   │   ├── schema.ts       # Drizzle schema definitions
+│   │   └── services/       # Business logic services
 │   ├── auth.ts             # Authentication utilities
-│   ├── db.ts               # Database operations
-│   ├── db-schema.sql       # Database schema with mock data
-│   └── userRoutes.ts       # API routes
-├── shared/                 # Shared types
-│   └── types.ts
-└── wrangler.jsonc          # Cloudflare configuration
+│   ├── index.ts            # Worker entry point
+│   └── userRoutes.ts       # API route handlers
+├── drizzle/                # Database migrations
+├── wrangler.jsonc          # Cloudflare Workers configuration
+└── package.json            # Project dependencies
 ```
-## Environment Variables
-Create a `.env` file based on `.env.example`:
-```env
-JWT_SECRET=your-secure-jwt-secret
-SESSION_TTL=604800
+
+## 🗄️ Database Schema
+
+The template includes a production-ready database schema with:
+
+- **Users**: Authentication and profile management
+- **Sessions**: JWT session tracking
+- **Items**: Example CRUD entity
+- **API Keys**: Programmatic access control
+
+Customize the schema in `worker/database/schema.ts` and generate migrations with:
+
+```bash
+bun run db:generate
 ```
-For production, use Wrangler secrets:
+
+## 🔐 Authentication
+
+The template includes a complete authentication system:
+
+### Register a New User
+
+```typescript
+import { api } from '@/lib/api-client';
+
+const { data, error } = await api.register(
+  'user@example.com',
+  'secure-password',
+  'Display Name',
+  'username'
+);
+```
+
+### Login
+
+```typescript
+const { data, error } = await api.login(
+  'user@example.com',
+  'secure-password'
+);
+```
+
+### Protected Routes
+
+```typescript
+import { useAuth } from '@/hooks/use-auth';
+
+function ProtectedPage() {
+  const { user, loading } = useAuth();
+  
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/login" />;
+  
+  return <div>Protected content</div>;
+}
+```
+
+## 🌐 API Routes
+
+The backend provides RESTful API endpoints:
+
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `POST /api/auth/logout` - Logout current session
+- `GET /api/auth/me` - Get current user
+- `PUT /api/auth/me` - Update user profile
+
+### Items (Example CRUD)
+- `GET /api/items` - List items (with pagination)
+- `POST /api/items` - Create item
+- `GET /api/items/:id` - Get single item
+- `PUT /api/items/:id` - Update item
+- `DELETE /api/items/:id` - Delete item
+
+### Health
+- `GET /api/health` - API health check
+- `GET /api/db/health` - Database health check
+
+Add your custom routes in `worker/userRoutes.ts`.
+
+## 🚢 Deployment
+
+### Deploy to Cloudflare Workers
+
+[cloudflarebutton]
+
+Or deploy manually:
+
+```bash
+# Build and deploy
+bun run deploy
+```
+
+### Environment Variables
+
+Update production secrets in `wrangler.jsonc`:
+
+```jsonc
+{
+  "vars": {
+    "JWT_SECRET": "your-secure-secret-here",
+    "SESSION_TTL": "604800"
+  }
+}
+```
+
+For sensitive values, use Wrangler secrets:
+
 ```bash
 bunx wrangler secret put JWT_SECRET
 ```
-## License
-MIT License
-## Support
-For issues and questions, please open an issue on GitHub.
+
+### Production Checklist
+
+- [ ] Update `JWT_SECRET` in production
+- [ ] Configure custom domain in Cloudflare dashboard
+- [ ] Set up D1 database in production
+- [ ] Create KV namespaces for production
+- [ ] Run database migrations on production database
+- [ ] Configure CORS settings if needed
+- [ ] Set up monitoring and alerts
+- [ ] Review security headers in `worker/index.ts`
+
+## 🧪 Testing
+
+```bash
+# Run tests
+bun test
+
+# Run tests in watch mode
+bun run test:watch
+
+# Generate coverage report
+bun run test:coverage
+```
+
+## 🎨 Customization
+
+### Styling
+
+- Modify theme colors in `src/index.css`
+- Update Tailwind configuration in `tailwind.config.js`
+- Add custom fonts in `src/index.css`
+
+### Components
+
+All UI components are located in `src/components/ui/` and can be customized to match your brand.
+
+### Database
+
+1. Modify schema in `worker/database/schema.ts`
+2. Generate migration: `bun run db:generate`
+3. Apply migration: `bunx wrangler d1 execute your-db-name --local --file=./drizzle/XXXX_*.sql`
+
+## 📚 Additional Resources
+
+- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
+- [Drizzle ORM Documentation](https://orm.drizzle.team/docs/overview)
+- [Hono Framework Documentation](https://hono.dev/)
+- [shadcn/ui Components](https://ui.shadcn.com/)
+- [React Router Documentation](https://reactrouter.com/)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+---
+
+Built with ❤️ using React, TypeScript, and Cloudflare Workers
