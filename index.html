@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO Meta Tags (will be overwritten by app) -->
+    <title>App Name</title>
+    <meta name="description" content="App description" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="App Name" />
+    <meta property="og:description" content="App description" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+        window.addEventListener('error', (event) => {
+          const isOurAppError = event.filename && event.filename.startsWith(window.location.origin);
+          if (isOurAppError) {
+            navigator.sendBeacon('/api/client-errors', JSON.stringify({
+              message: event.message,
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+              source: event.filename,
+              lineno: event.lineno,
+              colno: event.colno,
+              stack: event.error ? event.error.stack : null,
+              timestamp: new Date().toISOString()
+            }));
+          }
+        }, true);
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
