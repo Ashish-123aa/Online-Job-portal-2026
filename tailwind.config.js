@@ -47,7 +47,7 @@ export default {
   			'5xl': [
   				'3rem',
   				{
-  					lineHeight: '1.1'
+  					lineHeight: '1'
   				}
   			],
   			'6xl': [
@@ -97,8 +97,8 @@ export default {
   				foreground: 'hsl(var(--muted-foreground))'
   			},
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				DEFAULT: 'hsl(220 90% 56%)',
+  				foreground: 'hsl(0 0% 100%)'
   			},
   			border: 'hsl(var(--border))',
   			ring: 'hsl(var(--ring))',
